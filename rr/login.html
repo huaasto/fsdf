@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/quasar@2.2.2/dist/quasar.prod.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div id="q-app">
+    <div style="max-width: 400px;margin: 200px auto;text-align: center;">
+      <q-form
+        @submit="onSubmit"
+        class="q-gutter-md"
+      >
+      <div>
+        <q-input
+          filled
+          v-model="visitor"
+          label="visitor"
+        />
+      </div>
+      <div>
+        <q-input
+          filled
+          type="pwd"
+          v-model="pwd"
+          label="password"
+        />
+      </div>
+      <div>
+        <q-btn label="Submit" type="submit" color="primary"/>
+      </div>
+    </q-form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/quasar@2.2.2/dist/quasar.umd.prod.js"></script>
+  <!-- <script src="https://unpkg.com/vue-router@4"></script> -->
+  <script>
+    const { ref, reactive, onMounted, watch, computed, toRefs, nextTick } = Vue
+    // const {useRoute} = VueRouter
+    // const router = VueRouter.createRouter({
+    //   // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。
+    //   history: VueRouter.createWebHistory(),
+    //   routes: [], // `routes: routes` 的缩写
+    // })
+    const app = Vue.createApp({
+      setup () {
+        // const route = useRoute();
+        const visitor = ref('')
+        const pwd = ref('')
+        function onSubmit() {
+          fetch('/login',{
+            method: 'POST',
+            // headers: {
+            //   token: 'powerfultoken'
+            // },
+            body: JSON.stringify({
+              visitor:visitor.value,
+              pwd: pwd.value
+            })
+          }).then(res => res.json()).then(data => {
+            console.log(data)
+            if (!data.code) {
+              sessionStorage.setItem('token', data.token)
+              sessionStorage.setItem('githubToken', data.githubToken)
+              location.href = '/'
+            }
+          })
+        }
+        // setTimeout(() => {
+        //   code.value = route.query.code
+        // })
+        return {
+          visitor,
+          pwd,
+          onSubmit
+        }
+      }
+    })
+
+    app.use(Quasar)
+    // app.use(router)
+    app.mount('#q-app')
+  </script>
+</body>
+</html>
