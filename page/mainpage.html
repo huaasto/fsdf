@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1 style="text-align: center;">首页</h1>
+  <div class="countdown" style="margin: auto;" data-name="NEW YEAR" data-sign="START IN" data-time="2022-1-1 00:00:00"></div>
+  <script src="https://cdn.shopify.com/s/files/1/0530/3058/4480/files/countdown.js?v=1636368823"></script>
+  <style>
+    @media (min-width: 769px) {
+      .countdown{
+        max-width: 77%;
+      }
+      .countdown-name{
+        margin: 10px;
+      }
+    }
+    @media (max-width: 480px) {
+      .start-in{
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+  </div>
+  <!-- <div class="countdown" data-name="TEST" data-time="2021-12-10 20:00:00">timer</div> -->
+
+
+
+
+
+  <script>
+    var token = ''
+    var githubToken = ''
+    if(sessionStorage.token || token) {
+      token = sessionStorage.token
+      githubToken = sessionStorage.githubToken
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('githubToken')
+    } else {
+      location.href = 'login'
+    }
+    fetch('/login',{
+      method: 'POST',
+      headers: {
+        token: token
+      }
+    }).then((res) => res.json()).then(data => {
+      if (data.code) return location.href = 'login'
+      fetch('https://api.github.com/repos/huaasto/sdfs/issues',{
+        headers: {
+          'accept': 'application/vnd.github.v3+json',
+          'Authorization': 'token ' + githubToken
+        },
+        method: 'GET',
+      }).then(res => res.text()).then(data => {
+        console.log(data)
+      })
+    })
+    if (token){
+      window.onbeforeunload = () => {
+        sessionStorage.setItem('token', token)
+      }
+    }
+    
+  </script>
+</body>
+</html>
